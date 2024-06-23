@@ -24,7 +24,14 @@ const validateLogin = [
     .withMessage('Password is required'),
 ];
 
+const updateTaskValidator = [
+  body('title').trim().notEmpty().withMessage('Title must not be empty'),
+  body('description').trim().notEmpty().withMessage('Description must not be empty'),
+  body('status').isBoolean().withMessage('Status must be a boolean value'),
+];
+
 module.exports = {
   validateRegistration,
   validateLogin,
+  updateTaskValidator
 };

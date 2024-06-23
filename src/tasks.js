@@ -1,6 +1,8 @@
 const express = require('express');
 const { PrismaClient } = require('@prisma/client');
+const { updateTaskValidator} = require('./validators');
 const jwt = require('jsonwebtoken');
+const { validationResult, body } = require('express-validator');
 
 const prisma = new PrismaClient();
 const router = express.Router();
@@ -71,10 +73,14 @@ router.get('/:id', async (req, res) => {
 });
 
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', updateTaskValidator, async (req, res) => {
   const { id } = req.params;
   const { title, description, status } = req.body;
   const { userId } = req.user;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
   try {
     const task = await prisma.task.updateMany({
       where: { id: Number(id), userId },
